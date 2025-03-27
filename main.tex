@@ -50,6 +50,7 @@
 %------------ Table des matières ----------------
     \begingroup % start a TeX group
     \color{blue}
+    \renewcommand*\contentsname{Table of contents}
     \tabledematieres % Créer la table de matières
     \endgroup
 
@@ -61,34 +62,34 @@
     \section{Introduction}
 % Effacer les lignes suivantes et écrire le texte souhaité
 
-    Glassblowing is an art form with deep cultural and historical roots, especially in France, where it represents centuries of craftsmanship and tradition. However, preserving this heritage poses modern challenges, such as the environmental impact of energy-intensive training methods and the need to adapt these artisanal techniques to new technologies.
+    Glassblowing is an art form with deep cultural and historical roots, especially in France, where it represents centuries of craftsmanship and tradition. However, preserving this heritage poses modern challenges, such as the environmental impact of energy-intensive training methods and adapting these artisanal techniques to new technologies.
 
-    The overarching goal of the LORIA (Laboratoire Lorrain de Recherche Informatique et ses applications) project is to design a fully immersive augmented reality experience that allows users to blow and shape their own molten glass to create various forms, such as vases or sculptures. This project aims to strike a delicate balance between the realism of the interactions and the technical performance, paving the way for new possibilities in digital creation and virtual craftsmanship.
+    The overarching goal of the LORIA (Laboratoire Lorrain de Recherche Informatique et ses Applications) project is to design a fully immersive augmented-reality experience that allows users to blow and shape their own molten glass to create various forms, such as vases or sculptures. Our challenge is to balance the realism of the interactions and the technical performance, paving the way for new possibilities in digital creation and virtual craftsmanship.
 
-    Beyond its technical innovations, this project aims to contribute to the preservation of glassblowing as a craft while addressing sustainability. By providing a virtual training tool, it could reduce the reliance on furnaces for practice, significantly lowering the ecological footprint of the learning process.
+    Beyond its technical innovations, this project contributes to the preservation of glassblowing while addressing sustainability. By providing a virtual training tool, our project could reduce the reliance on furnaces for practice, significantly lowering the ecological footprint of the learning process.
 
-    This project focuses on creating a real-time simulation of molten glass using raymarching techniques on 3D point clouds. Raymarching, a rendering method that calculates light interaction by progressing along rays to detect surfaces, offers a highly flexible way to represent complex physical deformations. In our case, it allows us to dynamically model the surface of molten glass.
+    We are creating a real-time simulation of molten glass using raymarching techniques on 3D point clouds. Raymarching, a rendering method in which the renderer progressively marches along rays to detect surfaces, offers a highly flexible approach to representing complex physical deformations. In our case, raymarching allows us to dynamically model the surface of molten glass.
 
-    The originality of this work lies in its departure from traditional mesh-based rendering. Instead, we leverage implicit surfaces and raymarching to bridge the gap between dynamic physical simulation and advanced visualization techniques. Despite the complexity of molten glass, which behaves as both a fluid and a solid depending on temperature and movement, our approach offers a promising solution for realistic real-time rendering.
-
-    \newpage
-    \section{La méthodologie}
+    This work departs from traditional mesh-based rendering. Instead, we employ implicit surfaces and raymarching, as they are well-suited for handling point cloud data, enabling a seamless integration of dynamic physical simulation with advanced visualization techniques. Despite the complexity of molten glass, which behaves as both a fluid and a solid depending on temperature and movement, our approach proposes a promising solution for realistic real-time rendering.
 
     \newpage
-    \section{Les résultats, la discussion}
+    \section{The methodology}
 
     \newpage
-    \section{Les conclusions, future perspectives}
+    \section{Results and discussion}
 
     \newpage
-    \section{Les références bibliographiques}
-   Collision Detection for Raymarch Objects by Floney Yang \cite{yang_raymarching_2024}, which helped us understand collision techniques, though it does not address deformable materials like glass.
+    \section{Conclusions, future prospects}
 
-    GitHub repositories like UnityRaymarchingCollision \cite{hecomi_raymarching_2024} and Raymarch Engine \cite{koskimies_raymarching_2024}, which offer practical raymarching examples but lack real-time physical simulation.
+    \newpage
+    \section{Bibliographical references}
+   \cite{yang_raymarching_2024} by Floney Yang, which helped us understand collision techniques, though it does not address deformable materials like glass.
 
-    Adrian Biagioli's blog \cite{biagioli_raymarching_2024} Raymarching: Step Into the Light and Nabil N. Mansour's article Raymarching in Three.js \cite{mansour_sdf_2024}, both of which provide excellent foundations but do not cover dynamic systems like ours.
+    GitHub repositories like \cite{hecomi_raymarching_2024} and \cite{koskimies_raymarching_2024}, which offer practical raymarching examples but lack real-time physical simulation.
 
-    The paper "Modelling of the Glass Melting Process for Real-Time Implementation" \cite{agh_university_of_science_and_technology_in_krakow_30-059_krakow_mickiewicza_av_30_poland_modelling_2015} focuses on using Finite Element Method (FEM) models to optimize the control of glass manufacturing processes, such as bottle production. It addresses real-time control challenges, aiming to improve energy efficiency and product quality through advanced supervisory control systems.
+    Adrian Biagioli's blog \cite{biagioli_raymarching_2024} and Nabil N. Mansour's article \cite{mansour_sdf_2024}, both of which provide excellent foundations but do not cover dynamic systems like ours.
+
+    \cite{grega2015modelling} focuses on using Finite Element Method (FEM) models to optimize the control of glass manufacturing processes, such as bottle production. It addresses real-time control challenges, aiming to improve energy efficiency and product quality through advanced supervisory control systems.
 
     However, this study does not provide a solution to our problem. It primarily targets industrial control rather than real-time graphical visualization. The FEM models discussed are computationally intensive and unsuitable for interactive simulations. Additionally, the paper does not explore techniques like raymarching or implicit surfaces, which are crucial to our project’s goal of simulating molten glass dynamically and realistically.
 
