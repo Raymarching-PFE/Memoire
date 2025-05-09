@@ -282,6 +282,12 @@
 
 \section{Conclusions, future prospects}
 
+    This work was conducted within the framework of a broader research initiative led by the LORIA, aiming to create an immersive augmented reality experience for glassblowing. The contribution presented here focused exclusively on the real-time visual rendering of molten glass, with the objective of reproducing its appearance in a convincing and responsive manner. No physical simulation was implemented; the scope remained limited to the graphical representation of the material. \\
+
+    To meet this objective, a raymarching-based rendering pipeline was developed, using implicit surfaces and compute shaders to visualize deformable shapes in real time. Lighting and blending techniques were introduced to emulate the semi-fluid, semi-transparent qualities of molten glass. In addition, a custom space partitioning algorithm was designed to optimize point cloud traversal, laying the groundwork for handling complex datasets efficiently. These developments demonstrate the feasibility of achieving realistic visual representations of molten glass without relying on mesh geometry. \\
+    
+    The system offers a solid foundation for further research. Future work may explore the integration of user interaction, enabling real-time shaping of the virtual glass. Improvements in transparency handling and optical effects, such as internal refraction, also remain areas for development. Ultimately, the incorporation of physically-based simulation models—capturing viscosity, heat diffusion, and deformation dynamics—could provide a more complete and physically faithful rendering system, extending the project beyond visual appearance toward behavioral realism.
+
 \newpage
     
 \section{Bibliographical references}
