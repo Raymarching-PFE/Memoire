@@ -49,6 +49,9 @@
 \vspace{1em} % espace entre "Abstract" et le paragraphe
 
         Glassblowing is a culturally significant and technically demanding craft whose preservation faces modern challenges, including environmental concerns and limited accessibility to training. \\
+
+        The LORIA aims to create some virtual simulations around glass blowing; like a virtual simulation of glass blowing with VR for example. Rendering motlen glass in real time is 
+        
         This project explores a real-time simulation of molten glass using raymarching techniques applied to implicit surfaces and 3D point clouds. A custom rendering pipeline was implemented in Vulkan, leveraging compute shaders for efficient parallel execution and enhanced control over memory access. Blending operations, Fresnel-based lighting, and reflection models were integrated to visually reproduce the semi-fluid, reflective nature of molten glass. A bespoke space partitioning algorithm was also developed to optimise point cloud traversal. \\
         Preliminary results confirm the feasibility and visual realism of the approach, establishing a solid foundation for future integration of physical simulation and user interaction. \\
         Beyond its technical contributions, this work illustrates how immersive technologies can support the transmission of traditional craftsmanship while promoting more sustainable practices.
@@ -63,9 +66,6 @@
 \renewcommand*\contentsname{Table of contents}
 \tabledematieres % Créer la table de matières
 \endgroup
-
-%------------ Corps du rapport ----------------
-
 
 %------------ Introduction ----------------
 
@@ -84,6 +84,8 @@
     Beyond its technical scope, the project also addresses sustainability. By offering a virtual training tool, reliance on physical furnaces may be reduced, thereby lowering the environmental footprint associated with traditional training. This dual objective—technological innovation and ecological responsibility—forms the foundation of the work presented in the following sections.
 
 \newpage
+
+%------------ Corps du rapport ----------------
 
 \section{The methodology}
 
@@ -215,13 +217,37 @@
     
 \newpage
 
+    
+    \subsection{Performance Evaluation Method}
+        To assess the performance of the rendering system, a dedicated profiling methodology was established using the Tracy profiler. This tool enabled detailed monitoring of execution timings, memory usage, and GPU/CPU workload distribution, providing valuable insights into the internal behavior of the application.\\
+
+        \begin{enumerate}
+        
+            \item \textbf{Comparison between fragment shader and compute shader pipelines}\\
+                Performance was measured for both a traditional rasterization-based pipeline using fragment shaders and a compute-shader-based rendering pipeline. This comparison aimed to evaluate differences in control, parallelization efficiency, and resource usage.\\
+            
+            \item \textbf{Impact of the binary tree structure}\\
+                Tests were conducted with and without the custom space partitioning algorithm based on a binary tree, to determine its influence on distance computations and traversal efficiency within point cloud datasets.\\
+            
+            \item \textbf{Metric collection}\\
+                The profiling focused on collecting quantitative data such as frames per second (FPS), GPU utilization, and CPU utilization. To ensure consistency across tests, the same scene and parameters were used in all configurations, isolating the impact of the rendering pipeline itself.\\
+
+            \item \textbf{Multi-system testing}\\
+                In order to ensure generalizability and better understand performance variations across hardware, tests were conducted on multiple machines with different specifications. This approach provided a broader basis for comparison and highlighted the scalability of the system.\\
+
+        \end{enumerate}
+        
+        It should be noted that the use of ImGui for interface and debugging purposes introduces a dependency on the traditional graphics pipeline. As a consequence, the rendering system does not operate in a fully compute-only configuration. This factor was taken into account during performance measurements and may influence the interpretation of the results.
+
+    \newpage
+
 \section{Results and discussion}
 
     \subsection{Achieved results}
     
-        At the current stage of the project, a fully functional raymarching rendering loop has been implemented, enabling real-time visualization of implicit surfaces. Basic geometric shapes, such as spheres and tori, are rendered using Signed Distance Functions (SDFs), and blending techniques have been developed to produce smooth transitions between them—effectively mimicking the visual behavior of molten glass (see Figs.2–3).
+        At the current stage of the project, a fully functional raymarching rendering loop has been implemented, enabling real-time visualization of implicit surfaces. Basic geometric shapes, such as spheres and tori, are rendered using Signed Distance Functions (SDFs), and blending techniques have been developed to produce smooth transitions between them—effectively mimicking the visual behavior of molten glass (see Figs.2–3).\\
 
-        In addition to shape blending, dynamic lighting and reflection models have been integrated. Surface normals are computed from the gradient of the SDFs, and lighting effects—such as specular highlights and environmental reflections—are applied to enhance the appearance of a transparent, reflective material. These enhancements contribute to a visually convincing representation of molten glass (see Fig.4).
+        In addition to shape blending, dynamic lighting and reflection models have been integrated. Surface normals are computed from the gradient of the SDFs, and lighting effects—such as specular highlights and environmental reflections—are applied to enhance the appearance of a transparent, reflective material. These enhancements contribute to a visually convincing representation of molten glass (see Fig.4).\\
         
         A significant milestone was the transition from a traditional fragment shader pipeline to compute shaders. This change provided improved control over execution, memory management, and thread distribution, resulting in better performance and greater scalability for future extensions (see Table 1).
 
@@ -251,7 +277,7 @@
     
         The transition to compute shaders has led to improvements in frame rendering times and a reduction in GPU workload by optimizing memory access patterns and the execution of raymarching steps. Unlike fragment shaders, compute shaders decouple rendering from the rasterization pipeline, enabling more direct and efficient computation of per-pixel color values.\\
         
-        Although no formal benchmarking has yet been performed, a clear increase in visual fluidity and responsiveness has been observed, particularly when rendering large numbers of blended shapes.\
+        Although no formal benchmarking has yet been performed, a clear increase in visual fluidity and responsiveness has been observed, particularly when rendering large numbers of blended shapes.\\
         % TODO make screen shots and perf test, before/after
         
         From a visual realism standpoint, the blending technique and lighting model have proven effective in conveying the semi-solid, semi-fluid appearance of molten glass. It should be emphasized that this effect is purely graphical; no physical simulation of material behavior is included. The material responds convincingly to lighting, and the reflections contribute strong visual cues about shape and curvature.
@@ -282,11 +308,12 @@
 
 \section{Conclusions, future prospects}
 
-    This work was conducted within the framework of a broader research initiative led by the LORIA, aiming to create an immersive augmented reality experience for glassblowing. The contribution presented here focused exclusively on the real-time visual rendering of molten glass, with the objective of reproducing its appearance in a convincing and responsive manner. No physical simulation was implemented; the scope remained limited to the graphical representation of the material. \\
-
-    To meet this objective, a raymarching-based rendering pipeline was developed, using implicit surfaces and compute shaders to visualize deformable shapes in real time. Lighting and blending techniques were introduced to emulate the semi-fluid, semi-transparent qualities of molten glass. In addition, a custom space partitioning algorithm was designed to optimize point cloud traversal, laying the groundwork for handling complex datasets efficiently. These developments demonstrate the feasibility of achieving realistic visual representations of molten glass without relying on mesh geometry. \\
+    This work was conducted within the framework of a broader research initiative led by the LORIA, aiming to create an immersive augmented reality experience for glassblowing. The contribution presented here focused exclusively on the real-time visual rendering of molten glass, with the objective of reproducing its appearance in a convincing and responsive manner. No physical simulation was implemented; the scope remained limited to the graphical representation of the material.\\
     
-    The system offers a solid foundation for further research. Future work may explore the integration of user interaction, enabling real-time shaping of the virtual glass. Improvements in transparency handling and optical effects, such as internal refraction, also remain areas for development. Ultimately, the incorporation of physically-based simulation models—capturing viscosity, heat diffusion, and deformation dynamics—could provide a more complete and physically faithful rendering system, extending the project beyond visual appearance toward behavioral realism.
+    To meet this objective, a raymarching-based rendering pipeline was developed, using implicit surfaces and compute shaders to visualize deformable shapes in real time. Lighting and blending techniques were introduced to emulate the semi-fluid, semi-transparent qualities of molten glass. In addition, a custom space partitioning algorithm was designed to optimize point cloud traversal, and a binary tree structure was successfully generated from the dataset. These developments demonstrate the feasibility of achieving realistic visual representations of molten glass without relying on mesh geometry.\\
+    
+    The system offers a solid foundation for further research. Future work may include the integration of user interaction, allowing real-time shaping of the glass; improvements in optical realism, such as internal refraction and transparency handling; and the implementation of visual effects like thermal gradients to enrich the perception of material behavior. On a technical level, building the binary tree directly within the compute shader is a promising step toward full GPU-side computation. Ultimately, the vision is to transform the viewer into a true real-time simulation, where deformations applied to point clouds are computed interactively, with the spatial structure being updated dynamically. In the longer term, the incorporation of physically-based simulation models could extend the system beyond visual rendering toward behavioral realism.
+
 
 \newpage
     
