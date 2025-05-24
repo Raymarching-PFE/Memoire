@@ -65,16 +65,19 @@
     \centering %Centraliser le contenu
 
 % Logo Entreprise x ISART
-    \begin{figure}
-    \begin{subfigure}{.5\textwidth}
+    \noindent
+    \begin{minipage}{.33\textwidth}
     \centering
-    \includegraphics[width=0.7\textwidth]{logos/entreprise.png}\par\vspace{1cm} % METTRE ICI le LOGO de l'entreprise (équipe d'accueil)
-    \end{subfigure}%
-    \begin{subfigure}{.5\textwidth}
+    \includegraphics[width=0.7\textwidth]{logos/loria.png}
+    \end{minipage}%
+    \begin{minipage}{.33\textwidth}
     \centering
-    \includegraphics[width=0.7\textwidth]{logos/Logo_ISART.png}\par\vspace{1cm} %Insertion du logo ISART
-    \end{subfigure}
-    \end{figure}
+    \includegraphics[width=0.7\textwidth]{logos/Logo_Université_de_Lorraine.png}
+    \end{minipage}%
+    \begin{minipage}{.33\textwidth}
+    \centering
+    \includegraphics[width=0.7\textwidth]{logos/Logo_ISART.png}
+    \end{minipage}
 
 % Titre du rapport
     \rule{\linewidth}{0.2 mm} \\[0.4 cm]
@@ -97,20 +100,19 @@
 % Représentants de l'étudiant
     \begin{minipage}{0.4\textwidth}
     \begin{flushleft}
-    \emph{\textbf{Tuteur(s) ISART DIGITAL:}}\\
-    \tuteuruniv \\
+    \emph{\textbf{Tutor ISART DIGITAL:}}
+    \tuteuruniv
     \end{flushleft}
     \end{minipage}
     ~
     \begin{minipage}{0.4\textwidth}
     \begin{flushright}
-    \emph{\textbf{Tuteur entreprise :}} \\
-    \tuteurentreprise \\
+    \emph{\textbf{Tutor enterprise:}} \\
+    \tuteurentreprise
     \end{flushright}
     \end{minipage}\\[4cm]
 
     \vfill
-
 
     \end{titlepage}
     \newpage
@@ -129,3 +131,5 @@
     \label{fig: #4}
     \end{figure}
 }
+
+\newcommand{\approxnum}[1]{\raisebox{0.5ex}{\texttildelow}#1}

@@ -4,6 +4,25 @@
 % Packages
 \usepackage{lipsum}
 \usepackage{graphicx}
+\usepackage{listings}
+\usepackage{xcolor} % pour la coloration personnalisée
+
+\lstdefinestyle{cppstyle}{
+language=C++,
+basicstyle=\ttfamily\small,
+keywordstyle=\color{blue}\bfseries,
+commentstyle=\color{gray}\itshape,
+stringstyle=\color{red},
+numbers=left,
+numberstyle=\tiny\color{gray},
+stepnumber=1,
+numbersep=10pt,
+backgroundcolor=\color{white},
+frame=no,
+tabsize=3,
+showspaces=false,
+showstringspaces=false
+}
 
 % Document
 \title{Mémoire Game Programming} 
@@ -13,26 +32,26 @@
 
 \logoentreprise{logos/entreprise.png}
 
-    \titre{Real-Time Rendering of Molten Glass with \\ Raymarching Technique on Point Clouds}
+\titre{3D Visualisation of Molten Glass\\ using Raymarching Technique}
 
-    \mention{Game Programming}
-    \master{Option GPU}
-    \trigrammemention{MGP2 GPU}
+\mention{Game Programming}
+\master{Option GPU}
+\trigrammemention{MGP2 GPU}
 
-    \eleve{Félix Chevalier \\ Manon Méhalin \\ Maxence Retier}
-    
-    \dates{September 2024 - June 2025}
+\eleve{Félix Chevalier \\ Manon Méhalin \\ Maxence Retier}
+
+\dates{September 2024 - June 2025}
 
 % Informations tuteurs ISART
-    \tuteuruniv{
-        \textsc{Maël ADDOUM} \\
-        m.addoum@isartdigital.com
-    }
+\tuteuruniv{
+    \textsc{Maël ADDOUM} \\
+    m.addoum@isartdigital.com
+}
 
-    \tuteurentreprise{
-        \textsc{Sylvain CONTASSOT-VIVIER} \\
-        sylvain.contassotvivier@loria.fr \\
-    }
+\tuteurentreprise{
+    \textsc{Sylvain CONTASSOT-VIVIER} \\
+    sylvain.contassotvivier@loria.fr \\
+}
 
 %----------- Initialisation -------------------
 
@@ -43,19 +62,15 @@
 \vspace*{\stretch{1}}
 
 \begin{center}
-    \textbf{Abstract}
+\textbf{Abstract}
 \end{center}
 
 \vspace{1em} % espace entre "Abstract" et le paragraphe
 
-        Glassblowing is a culturally significant and technically demanding craft whose preservation faces modern challenges, including environmental concerns and limited accessibility to training. \\
+    This project explores a real-time simulation of molten glass using raymarching techniques applied to implicit surfaces and 3D point clouds. A custom rendering pipeline was implemented in Vulkan, leveraging compute shaders for efficient parallel execution and enhanced control over memory access. Blending operations, Phong-based lighting, and reflection models were integrated to visually reproduce the semi-fluid, reflective nature of molten glass. A bespoke space partitioning algorithm was also developed to optimise point cloud traversal. \\
+    Preliminary results confirm the feasibility and visual realism of the approach, establishing a solid foundation for future integration of physical simulation and user interaction. \\
+    Beyond its technical contributions, this work illustrates how immersive technologies can support the transmission of traditional craftsmanship while promoting more sustainable practices.
 
-        The LORIA aims to create some virtual simulations around glass blowing; like a virtual simulation of glass blowing with VR for example. Rendering motlen glass in real time is 
-        
-        This project explores a real-time simulation of molten glass using raymarching techniques applied to implicit surfaces and 3D point clouds. A custom rendering pipeline was implemented in Vulkan, leveraging compute shaders for efficient parallel execution and enhanced control over memory access. Blending operations, Fresnel-based lighting, and reflection models were integrated to visually reproduce the semi-fluid, reflective nature of molten glass. A bespoke space partitioning algorithm was also developed to optimise point cloud traversal. \\
-        Preliminary results confirm the feasibility and visual realism of the approach, establishing a solid foundation for future integration of physical simulation and user interaction. \\
-        Beyond its technical contributions, this work illustrates how immersive technologies can support the transmission of traditional craftsmanship while promoting more sustainable practices.
-    
 \vspace*{\stretch{1}}
 
 \newpage
@@ -71,17 +86,17 @@
 
 \section{Introduction}
 
-    Glassblowing is an art form with deep cultural and historical significance, particularly in France, where it embodies centuries of craftsmanship and tradition. However, preserving this heritage presents modern challenges, including the environmental impact of energy-intensive training methods and the need to adapt artisanal practices to digital technologies. \\
-    
-    This work is conducted within a broader research initiative led by the LORIA (Laboratoire Lorrain de Recherche Informatique et ses Applications), which aims to develop an immersive augmented reality experience for virtual glassblowing. The present contribution focuses specifically on the real-time visual rendering of molten glass. No physical modeling of the material is performed; the project is limited to graphical representation, with the objective of producing a visually convincing depiction of molten glass in an interactive context. \\
-    
-    Real-time visualization of molten glass remains a complex task due to its semi-fluid behavior and optical properties. Achieving a balance between realism and performance is essential to enable integration into interactive environments.
-    
-    To this end, a simulation framework based on raymarching techniques applied to 3D point clouds has been developed. Raymarching—an algorithm that advances rays incrementally to detect surfaces—offers a flexible approach to visualizing deformable materials. In this context, it enables the dynamic visualization of molten glass surfaces without relying on explicit geometry. \\
-    
-    This method departs from traditional mesh-based rendering. Instead, implicit surfaces and raymarching are employed for their suitability with point cloud data, allowing dynamic deformation to be integrated with advanced visual effects. Although molten glass exhibits both fluid and solid characteristics depending on temperature and motion, these physical behaviors are not simulated. Rather, the rendering method approximates the visual result in real time. \\
-    
-    Beyond its technical scope, the project also addresses sustainability. By offering a virtual training tool, reliance on physical furnaces may be reduced, thereby lowering the environmental footprint associated with traditional training. This dual objective—technological innovation and ecological responsibility—forms the foundation of the work presented in the following sections.
+Glassblowing is an art form with deep cultural and historical significance, particularly in France, where it embodies centuries of craftsmanship and tradition. However, preserving this heritage presents modern challenges, including the environmental impact of energy-intensive training methods and the need to adapt artisanal practices to digital technologies. \\
+
+\noindent This work is conducted within a broader research initiative led by the LORIA (Laboratoire Lorrain de Recherche Informatique et ses Applications), which aims to develop an immersive augmented reality experience for virtual glassblowing. The present contribution focuses specifically on the real-time visual rendering of molten glass. No physical modelling of the material is performed; the project is limited to graphical representation, to produce a visually convincing depiction of molten glass in an interactive context. \\
+
+\noindent Real-time visualisation of molten glass remains a complex task due to its semi-fluid behaviour and optical properties. Achieving a balance between realism and performance is essential to enable integration into interactive environments.
+
+\noindent To this end, a simulation framework based on raymarching techniques applied to 3D point clouds has been developed. Raymarching, an algorithm that advances rays incrementally to detect surfaces, offers a flexible approach to visualising deformable materials. In this context, it enables the dynamic visualisation of molten glass surfaces without relying on explicit geometry. \\
+
+\noindent This method departs from traditional mesh-based rendering. Instead, implicit surfaces and raymarching are employed for their suitability with point cloud data, allowing dynamic deformation to be integrated with advanced visual effects. Although molten glass exhibits both fluid and solid characteristics depending on temperature and motion, these physical behaviours are not simulated. Rather, the rendering method approximates the visual result in real-time. \\
+
+\noindent Beyond its technical scope, the project also addresses sustainability. By offering a virtual training tool, reliance on physical furnaces may be reduced, thereby lowering the environmental footprint associated with traditional training. This dual objective, technological innovation and ecological responsibility, forms the foundation of the work presented in the following sections.
 
 \newpage
 
@@ -89,241 +104,462 @@
 
 \section{The methodology}
 
-    To address the challenge of representing molten glass in real time, a structured and experimental methodology was adopted, drawing from graphics programming and real-time rendering techniques. This project does not aim to reproduce the physical behavior of molten glass but focuses exclusively on its visual representation. The objective is to develop a convincing and responsive graphical system suitable for immersive environments. This required a balance between artistic fidelity, technical feasibility, and performance constraints.
+To address the challenge of representing molten glass in real-time, a structured and experimental methodology was adopted, drawing from graphics programming and real-time rendering techniques. This project does not aim to reproduce the physical behaviour of molten glass but focuses exclusively on its visual representation. The objective is to develop a convincing and responsive graphical system suitable for immersive environments. This required a balance between artistic fidelity, technical feasibility, and performance constraints.
 
-    \subsection{Technical Scope and Approach}
+\subsection{Technical Scope and Approach}
+
+    The visual rendering of molten glass presents several unique challenges: it must appear fluid, semi-transparent, and dynamically deformable. Traditional mesh-based rendering methods are generally inadequate for representing such materials, particularly when geometry evolves continuously. To address these limitations, a \textbf{raymarching-based rendering technique} was selected, enabling the direct rendering of \textbf{implicit surfaces} without predefined geometry. \\
     
-        The visual rendering of molten glass presents several unique challenges: it must appear fluid, semi-transparent, and dynamically deformable. Traditional mesh-based rendering methods are generally inadequate for representing such materials, particularly when geometry evolves continuously. To address these limitations, a \textbf{raymarching-based rendering technique} was selected, enabling the direct rendering of \textbf{implicit surfaces} without predefined geometry. \\
+    \noindent Raymarching is a rendering approach in which rays are cast through a scene, and the algorithm incrementally advances along each ray until a surface is detected (see Fig.1). This technique is particularly effective for rendering mathematically defined surfaces such as metaballs, soft shape blends, or deformable volumes, features that are well suited for conveying the visual characteristics of molten glass.
+
+    \begin{figure}[H]
+        \centering
+        \includegraphics[scale=0.5]{diagrams/raymarching-diagram.png}
+        \caption{Raymarching system}
+        \label{fig:label_image}
+    \end{figure}
+
+\newpage
+
+
+\subsection{Project Breakdown}
+    
+    The technical development was structured into several incremental phases:\\
+
+    \begin{enumerate}
+    
+      \item \textbf{Initial Raymarching Setup}
+      
+        A minimal raymarching loop was first implemented to render a basic torus shape using Signed Distance Functions (SDFs). \\
         
-        Raymarching is a rendering approach in which rays are cast through a scene, and the algorithm incrementally advances along each ray until a surface is detected (see Fig.1). This technique is particularly effective for rendering mathematically defined surfaces such as metaballs, soft shape blends, or deformable volumes—features that are well suited for conveying the visual characteristics of molten glass.
+        \noindent A SDF is a mathematical function that, given a point in space, returns the shortest distance from that point to the surface of an object. The sign of the distance indicates whether the point is inside (negative value), on the surface (zero), or outside (positive value) of the object.\\
+        Mathematically, for a point p and a surface S, an SDF f(p) satisfies:
+
+        \begin{itemize}
+            \item[\hspace{1cm}] • f(p) < 0 if p is inside the surface,
+            \item[\hspace{1cm}] • f(p) = 0 if p lies exactly on the surface,
+            \item[\hspace{1cm}] • f(p) > 0 if p is outside the surface.\\
+        \end{itemize}
+
+        \noindent This concept is particularly powerful in the context of raymarching, where rendering relies on marching a ray through the scene and stopping when it is sufficiently close to a surface (i.e., when the SDF returns a value close to zero). The value returned by the SDF at each step tells the algorithm how far it can safely advance without hitting any geometry.
+        This step enabled validation of the rendering pipeline and early experimentation with implicit surface definitions. See the mathematical function here to render a torus (see Fig.2) and a sphere.\\
+
+        \begin{lstlisting}[style=cppstyle]
+float torusSDF(vec3 p, vec2 t) 
+{
+vec2 q = vec2(length(p.xz) - t.x, p.y);
+return length(q) - t.y;
+}
+        \end{lstlisting}
+
+        \begin{lstlisting}[style=cppstyle]
+float sphereSDF(vec3 p, vec3 center, float radius) 
+{
+return length(p - center) - radius;
+}
+        \end{lstlisting}
     
         \begin{figure}[H]
             \centering
-            \includegraphics[scale=0.5]{diagrams/raymarching-diagram.png}
-            \caption{Raymarching system}
+            \includegraphics[scale=0.5]{OurProject/SimpleTorus.png}
+            \caption{Raymarching torus}
+            \label{fig:label_image}
+        \end{figure}
+
+        
+      \item \textbf{Implementation of Shape Blending}
+
+        One of the main advantages of SDFs is that they allow the representation of implicit surfaces, surfaces defined not by vertices or meshes, but by equations. This makes them ideal for modelling smooth, continuous shapes like spheres, tori, or more complex forms created through blending (smooth unions), deformation, or procedural transformations.\\
+
+        \noindent To simulate the smooth merging of surfaces, as we observe in real molten or soft materials, we use a smooth minimum function. One commonly used variant is the polynomial smooth min, defined as:
+
+        \begin{lstlisting}[style=cppstyle]
+float smoothMin(float a, float b, float k) 
+{
+    float h = max(k - abs(a - b), 0.0) / k;
+    return min(a, b) - h * h * h * k * (1.0 / 6.0);
+}
+        \end{lstlisting}
+
+        \begin{itemize}
+            \item[\hspace{1cm}] • \textbf{a} and \textbf{b} are the distance values from the two SDFs.
+            \item[\hspace{1cm}] • \textbf{k} is the blending factor: the higher the value, the softer the blend.\\
+        \end{itemize}
+
+        \newpage
+
+        \noindent This function smoothly interpolates between the two distance fields when they are close, producing a rounded transition rather than a hard intersection. Visually, this results in a fluid, organic fusion of shapes — ideal for simulating viscous materials such as glass in a molten state. (See Fig.3)\\
+    
+        \begin{figure}[H]
+            \centering
+            \includegraphics[scale=0.5]{OurProject/BlendingRaymarching.png}
+            \caption{Raymarching blending}
             \label{fig:label_image}
         \end{figure}
     
-    \newpage
-    
-    \subsection{Project Breakdown}
+      \newpage
+
         
-        The technical development was structured into several incremental phases:
+      \item \textbf{Lighting and Reflection Enhancements}
+      
+        Realistic shading is essential for depicting transparent and reflective materials such as glass.
+        Phong-based lighting, Fresnel effects, and surface normals derived from SDF gradients were incorporated to enhance visual realism (see Fig.4).\\
+    
+        \begin{figure}[H]
+            \centering
+            \includegraphics[scale=0.5]{OurProject/LightRaymarching.png}
+            \caption{Raymarching Phong light}
+            \label{fig:label_image}
+        \end{figure}
+    
+      \item \textbf{Transition to Compute Shaders}
+        
+        The initial implementation relied on fragment shaders, but performance and flexibility limitations led to a migration to compute shaders.
+        This transition provided enhanced control over parallel execution and memory access, enabling better performance and supporting future extensions involving point cloud data.\\
+
+        \newpage
+
+
+      \item \textbf{Upgrading raymarching rendering}
+
+        To enhance the realism of the molten glass material, we implemented a transparency model within our raymarching shader. This feature allows the simulation of light transmission through semi-transparent materials, which is essential for mimicking the visual behaviour of real glass.\\
+
+        \noindent Transparency is controlled through a Material structure that contains parameters such as reflectivity, transparency, and the index of refraction. During the raymarching process, when a ray intersects an object, the material properties are retrieved using the sceneSDF function. While current examples use opaque spheres, the framework is fully capable of handling transparent objects.\\
+
+       \noindent Additionally, light attenuation is applied at each bounce to simulate absorption, which adds visual depth and realism. The final colour of the pixel results from a weighted combination of direct lighting, reflected light, and refracted light, depending on the material's optical properties.\\
+
+        \noindent When a ray hits a surface, it can reflect depending on the surface's reflectivity. The reflected direction is calculated using the standard reflection formula:
+
+        \begin{lstlisting}[style=cppstyle]
+vec3 reflectDir = reflect(ray.direction, normal);
+        \end{lstlisting}
+
+        \noindent If the material's reflectivity is high, the ray is bounced in the reflected direction and continues its march, contributing to mirror-like highlights and surface detail.\\
+
+
+      \item \textbf{Transparency and Refraction}
+        
+        Transparency is controlled by a coefficient stored in the material. When transparency is non-zero, the shader considers refraction, which simulates light bending as it passes through the surface, according to Snell’s Law. The refracted direction is computed with:
+
+        \begin{lstlisting}[style=cppstyle]
+vec3 refractDir = refract(ray.direction, normal, eta);
+        \end{lstlisting}
+        
+        \noindent Where eta is the ratio of indices of refraction (IOR) between the two media, the IOR defines how much the light bends; typical values range from 1.0 (air) to 1.5 (glass).\\
+
+        \noindent If a valid refracted ray exists and the material is more transparent than reflective, the ray continues inside the object. Otherwise, it reflects. This choice is determined dynamically at each bounce:
+
+        \begin{lstlisting}[style=cppstyle]
+bool useRefract = transparency > reflectivity 
+                && length(refractDir) > 0.001;
+        \end{lstlisting}
+
+        \newpage
+    
+
+      \item \textbf{Light Attenuation and Final Color}
+        
+        To simulate absorption of light in transparent materials, an attenuation factor is applied after each bounce. This causes light to gradually lose intensity and adopt the material’s colour, mimicking how real glass absorbs and tints light:
+
+        \begin{lstlisting}[style=cppstyle]
+attenuation *= mix(vec3(1.0), material.color, 0.1);
+        \end{lstlisting}
+
+        \noindent The final colour of the pixel is computed by combining:
+        \begin{itemize}
+            \item[\hspace{1cm}] • Direct light (diffuse),
+            \item[\hspace{1cm}] • Reflected light (from mirrored surfaces),
+            \item[\hspace{1cm}] • Refracted light (transmitted through transparent areas), 
+        \end{itemize}
+
+        \noindent all weighted by the material's properties.
+        
+        \begin{figure}[H]
+            \centering
+            \includegraphics[scale=0.5]{OurProject/RaymarchingTransparencyCapture.png}
+            \caption{Reflection and refraction}
+            \label{fig:label_image}
+        \end{figure}
+
+        \newpage
+
+    \end{enumerate}
+
+
+\subsection{Space partitioning}
 
         \begin{enumerate}
-        
-          \item \textbf{Initial Raymarching Setup}\\
-            A minimal raymarching loop was first implemented to render a basic torus shape using Signed Distance Functions (SDFs). \\
-            This step enabled validation of the rendering pipeline and early experimentation with implicit surface definitions (see Fig.2).
-        
-            \begin{figure}[H]
-                \centering
-                \includegraphics[scale=0.5]{OurProject/SimpleTorus.png}
-                \caption{Raymarching torus}
-                \label{fig:label_image}
-            \end{figure}
-            \newpage
-            
-          \item \textbf{Implementation of Shape Blending}\\
-            To approximate the soft, flowing appearance of molten glass, blending operations between multiple SDFs were introduced. \\
-            By combining a torus and a sphere with smooth transitions, organic shapes were generated to reflect visual deformations observed in real glassblowing (see Fig.3).
-        
-            \begin{figure}[H]
-                \centering
-                \includegraphics[scale=0.5]{OurProject/BlendingRaymarching.png}
-                \caption{Raymarching blending}
-                \label{fig:label_image}
-            \end{figure}
-        
-          \newpage
-            
-          \item \textbf{Lighting and Reflection Enhancements}\\
-            Realistic shading is essential for depicting transparent and reflective materials such as glass.
-            Phong-based lighting, Fresnel effects, and surface normals derived from SDF gradients were incorporated to enhance visual realism (see Fig.4).\\
-        
-            \begin{figure}[H]
-                \centering
-                \includegraphics[scale=0.5]{OurProject/LightRaymarching.png}
-                \caption{Raymarching Phong light}
-                \label{fig:label_image}
-            \end{figure}
-        
-            \item \textbf{Transition to Compute Shaders}\\
-            The initial implementation relied on fragment shaders, but performance and flexibility limitations led to a migration to compute shaders.
-            This transition provided enhanced control over parallel execution and memory access, enabling better performance and supporting future extensions involving point cloud data.\\
     
-            \newpage
+        %\item \textbf{Space Partitioning algorithm}\\
+        Distance evaluations for multiple spheres were identified as a computational bottleneck in the raymarching process.
+        %(?TODO mettre une capture de tracy avec les sphere distance en rouge pour mettre en avant)
+        To improve performance when processing large point clouds, a custom space partitioning algorithm was developed, prioritising balanced subdivision and traversal efficiency over conventional methods such as k-d trees \cite{Bruce_Naylor_Partitioning_Trees}.\\\\
+    
+        % \item \textbf{Custom Space Partitioning algorithm}\\
+        The algorithm begins by computing an Axis-Aligned Bounding Box (AABB) around the point cloud, followed by recursive axis-aligned subdivisions along X, Y, and Z axes based on median point positions.
+        This ensures an even distribution of points across subdivisions and minimises the depth of the resulting binary tree (see Fig.6).
         
-            \item \textbf{Space Partitioning algorithm}\\
-            Distance evaluations for multiple spheres were identified as a computational bottleneck in the raymarching process.
-            %(?TODO mettre une capture de tracy avec les sphere distance en rouge pour mettre ca en avant)
-            To improve performance when processing large point clouds, a custom space partitioning algorithm was developed, prioritizing balanced subdivision and traversal efficiency over conventional methods such as k-d trees \cite{Bruce_Naylor_Partitioning_Trees}.\\
-        
-            \item \textbf{Custom Space Partitioning algorithm}\\
-            The algorithm begins by computing an Axis-Aligned Bounding Box (AABB) around the point cloud, followed by recursive axis-aligned subdivisions along X, Y, and Z axes based on median point positions.
-            This ensures an even distribution of points across subregions and minimizes the depth of the resulting binary tree.\\
-            %TODO add image of drawio cuts
-    
-            \newpage
-            
-            \item \textbf{Binary tree}\\
-            Each AABB and its subdivision is represented as a node in a binary tree.
-            The root corresponds to the bounding volume of the entire point cloud, while child nodes contain recursively defined subspaces (see Fig.5).\\
-        
-            \begin{figure}[H]
-                \centering
-                \includegraphics[scale=0.3]{diagrams/binary-tree.png}
-                \caption{Binary tree}
-                \label{fig:label_image}
-            \end{figure}
-    
-            \newpage
-            
-            \item \textbf{Unique index, morton number}\\
-            Unique indices are assigned to each node using a Morton code.
-            The root node is indexed as 1, and each child inherits an index extended by 0 or 1 depending on its position relative to the cut.
-            This facilitates hierarchical traversal and memory alignment.\\
-            %TODO add image of drawio binary tree with index
-            %TODO add ref of morton order
-            
-            \item \textbf{Space Partitioning implementation in raymarching compute shader}\\
-            TODO
-            %TODO felix, on a pas encore les resultats
-            
-        \end{enumerate}
-    
-    \newpage
-    
-    \subsection{Development Environment}
-        The system has been implemented using Vulkan, a low-level graphics API offering fine-grained control over GPU resources and pipeline stages.
-        Vulkan was preferred over OpenGL for its performance, multithreading support, and native compatibility with compute shaders. \\
+        \begin{figure}[H]
+            \centering
+            \includegraphics[scale=0.5]{diagrams/SchemaPresIntermediaire-CuttedBoxExample.drawio}
+            \caption{Space representation of the point cloud bounding boxes after 2 cuts}
+            \label{fig:label_image}
+        \end{figure}
 
-        The rendering logic is written in C++, while GPU operations—such as raymarching, lighting, and memory management—are implemented in GLSL, with dedicated modules for fragment and compute shaders.
-        Version control was managed through Git, and the codebase was structured into modular components for maintainability and scalability.
+       \item \textbf{Binary tree}
+       
+        Each subdivision is represented by a node in a binary tree.
+        The root corresponds to the bounding volume of the entire point cloud, while child nodes contain recursively defined subspaces (see Fig.7).\\
     
-    \subsection{Key Technical Choices}
-        Several key decisions shaped the development approach:\\
+        \begin{figure}[H]
+            \centering
+            \includegraphics[scale=0.3]{diagrams/binary-tree.png}
+            \caption{Binary tree}
+            \label{fig:label_image}
+        \end{figure}
+
+        %\item \textbf{Unique index, morton number}\\
+        \noindent Unique indices are assigned to each node using the Morton order.
+        The root node is indexed as 1, and each child inherits an index extended by 0 or 1 depending on its position relative to the parent.
+        This allows the binary tree to be stored in a linear buffer, which is then sent to the compute shader.\\
+        %TODO mettre une image de l'arbre avec les indexes
+
+       \item \textbf{Tree exploration in compute shader}
         
-        \begin{itemize}
-            \item Adoption of raymarching: Enabled the rendering of smooth, deformable shapes without relying on mesh geometry.\\
-            
-            \item Use of implicit surfaces and blending techniques: Provided a way to visually represent molten glass in a fluid-like state through continuous transitions between forms.\\
-            
-            \item Migration to compute shaders: Offered improved performance and flexibility by decoupling rendering from the rasterization pipeline.\\
-            
-            \item Preparation for volumetric and point-based rendering: Established a foundation for future integration of 3D data structures, while remaining within the scope of real-time visualization, not physical simulation.\\
-            
-        \end{itemize}
-    
+        The common method for exploring all nodes in a tree involves recursive functions. However, due to limitations of GPU architectures, recursion is not supported. Tree traversal is therefore implemented using a stack, represented by an array of indices. The process begins with the root node, and a while loop is used to perform computations. During each iteration, child nodes are added to the stack only if they are relevant for future checks. To reduce unnecessary computations, nodes whose bounding boxes are not intersected by the current ray are excluded from traversal.\\
+
+        %TODO add an image of the ray tracing algorithm hitting aabbs
+
+        \noindent Visual effects, such as blending, are also adapted to the tree structure. Applying the smoothMin function to all spheres in the scene would be prohibitively inefficient. Instead, the binary tree allows each leaf node to contain a limited number of nearby points. Blending is thus restricted to the spheres contained within the same leaf node. Although this approach may introduce minor approximations, the visual results remain consistent, as nearby points are generally grouped within the same sub-region.\\
+
+        %TODO add images of the point cloud with and without blending comparaison
+        %TODO add images of the point cloud with complete blending and with particial blending comparison
+
+        \newpage
+
+        \noindent The lighting and reflection systems operate identically with or without tree-based traversal. The primary requirement is to correctly identify the nearest sphere in order to retrieve its associated data. Once the nearest geometry is determined, surface normals are computed and standard shading operations are applied. The binary tree structure contributes to the optimisation of lighting calculations, particularly for Phong-based effects, by reducing the number of distance evaluations needed.
+
+        %TODO add images of the point cloud with and without lighting comparaison
+        %TODO add images of the point cloud with and without reflection comparaison
+
+        %\newpage
+        
+        \begin{figure}[H]
+            \centering
+            \includegraphics[scale=0.4]{diagrams/FINAL_MoltenGlass_VaseDebugBox_1.png}
+            \caption{Smallest sub-boxes showed for debugging purposes}
+            \label{fig:label_image}
+        \end{figure}
+        
+        \begin{figure}[H]
+            \centering
+            \includegraphics[scale=0.4]{diagrams/FINAL_MoltenGlass_VasePointCloud_2.png}
+            \caption{The same view rendered with lighting and blending effects}
+            \label{fig:label_image}
+        \end{figure}
+    \end{enumerate}
+
 \newpage
 
+\subsection{Development Environment}
+
+    The system has been implemented using Vulkan, a low-level graphics API offering fine-grained control over GPU resources and pipeline stages.
+    Vulkan was preferred over OpenGL for its performance, multithreading support, and native compatibility with compute shaders. \\
+
+    \noindent The rendering logic is written in C++, while GPU operations, such as raymarching, lighting, and memory management, are implemented in GLSL, with dedicated modules for fragment and compute shaders.
+    Version control was managed through Git, and the codebase was structured into modular components for maintainability and scalability.
+
+\subsection{Key Technical Choices}
+
+    Several key decisions shaped the development approach:\\
     
-    \subsection{Performance Evaluation Method}
-        To assess the performance of the rendering system, a dedicated profiling methodology was established using the Tracy profiler. This tool enabled detailed monitoring of execution timings, memory usage, and GPU/CPU workload distribution, providing valuable insights into the internal behavior of the application.\\
-
-        \begin{enumerate}
+    \begin{itemize}
+        \item[\hspace{0cm}] • Adoption of raymarching: Enabled the rendering of smooth, deformable shapes without relying on mesh geometry.\\
         
-            \item \textbf{Comparison between fragment shader and compute shader pipelines}\\
-                Performance was measured for both a traditional rasterization-based pipeline using fragment shaders and a compute-shader-based rendering pipeline. This comparison aimed to evaluate differences in control, parallelization efficiency, and resource usage.\\
-            
-            \item \textbf{Impact of the binary tree structure}\\
-                Tests were conducted with and without the custom space partitioning algorithm based on a binary tree, to determine its influence on distance computations and traversal efficiency within point cloud datasets.\\
-            
-            \item \textbf{Metric collection}\\
-                The profiling focused on collecting quantitative data such as frames per second (FPS), GPU utilization, and CPU utilization. To ensure consistency across tests, the same scene and parameters were used in all configurations, isolating the impact of the rendering pipeline itself.\\
-
-            \item \textbf{Multi-system testing}\\
-                In order to ensure generalizability and better understand performance variations across hardware, tests were conducted on multiple machines with different specifications. This approach provided a broader basis for comparison and highlighted the scalability of the system.\\
-
-        \end{enumerate}
+        \item[\hspace{0cm}] • Use of implicit surfaces and blending techniques: Provided a way to visually represent molten glass in a fluid-like state through continuous transitions between forms.\\
         
-        It should be noted that the use of ImGui for interface and debugging purposes introduces a dependency on the traditional graphics pipeline. As a consequence, the rendering system does not operate in a fully compute-only configuration. This factor was taken into account during performance measurements and may influence the interpretation of the results.
+        \item[\hspace{0cm}] • Migration to compute shaders: Offered improved performance and flexibility by decoupling rendering from the rasterisation pipeline.\\
+        
+        \item[\hspace{0cm}] • Preparation for volumetric and point-based rendering: Established a foundation for future integration of 3D data structures, while remaining within the scope of real-time visualisation, not physical simulation.\\
+        
+    \end{itemize}
 
-    \newpage
+\newpage
+
+
+\subsection{Performance Evaluation Method}
+    To assess the performance of the rendering system, a dedicated profiling methodology was established using the Tracy profiler. This tool enabled detailed monitoring of execution timings, memory usage, and GPU/CPU workload distribution, providing valuable insights into the internal behaviour of the application.\\
+
+    \begin{enumerate}
+    
+        \item \textbf{Comparison between fragment shader and compute shader pipelines}\\
+            Performance was measured for both a traditional rasterisation-based pipeline using fragment shaders and a compute-shader-based rendering pipeline. This comparison aimed to evaluate differences in control, parallelisation efficiency, and resource usage.\\
+        
+        \item \textbf{Impact of the binary tree structure}\\
+            Tests were conducted with and without the custom space partitioning algorithm based on a binary tree to determine its influence on distance computations and traversal efficiency within point cloud datasets.\\
+        
+        \item \textbf{Metric collection}\\
+            The profiling focused on collecting quantitative data such as frames per second (FPS), GPU utilisation, and CPU utilisation. To ensure consistency across tests, the same scene and parameters were used in all configurations, isolating the impact of the rendering pipeline itself.\\
+
+        \item \textbf{Multi-system testing}\\
+            To ensure generalizability and better understand performance variations across hardware, tests were conducted on multiple machines with different specifications. This approach provided a broader basis for comparison and highlighted the scalability of the system.\\
+
+    \end{enumerate}
+    
+    \noindent It should be noted that the use of ImGui for interface and debugging purposes introduces a dependency on the traditional graphics pipeline. As a consequence, the rendering system does not operate in a fully compute-only configuration. This factor was taken into account during performance measurements and may influence the interpretation of the results.
+
+\newpage
+
 
 \section{Results and discussion}
-
     \subsection{Achieved results}
     
-        At the current stage of the project, a fully functional raymarching rendering loop has been implemented, enabling real-time visualization of implicit surfaces. Basic geometric shapes, such as spheres and tori, are rendered using Signed Distance Functions (SDFs), and blending techniques have been developed to produce smooth transitions between them—effectively mimicking the visual behavior of molten glass (see Figs.2–3).\\
-
-        In addition to shape blending, dynamic lighting and reflection models have been integrated. Surface normals are computed from the gradient of the SDFs, and lighting effects—such as specular highlights and environmental reflections—are applied to enhance the appearance of a transparent, reflective material. These enhancements contribute to a visually convincing representation of molten glass (see Fig.4).\\
+        At the current stage of the project, a fully functional raymarching rendering loop has been implemented, enabling real-time visualisation of implicit surfaces. Basic geometric shapes, such as spheres, are rendered using Signed Distance Functions (SDFs), and blending techniques have been developed to produce smooth transitions between them, effectively mimicking the visual behaviour of molten glass.\\
+    
+        \noindent In addition to shape blending, dynamic lighting and reflection models have been integrated. Surface normals are computed from the gradient of the SDFs, and lighting effects, such as specular highlights and environmental reflections, are applied to enhance the appearance of a transparent, reflective material. These enhancements contribute to a visually convincing representation of molten glass.\\
         
-        A significant milestone was the transition from a traditional fragment shader pipeline to compute shaders. This change provided improved control over execution, memory management, and thread distribution, resulting in better performance and greater scalability for future extensions (see Table 1).
-
+        \noindent A significant milestone was the transition from a traditional fragment shader pipeline to compute shaders. This change provided improved control over execution, memory management, and thread distribution, resulting in better performance and greater scalability for future extensions. A custom binary tree structure was also implemented to optimise point cloud traversal, laying the foundation for more efficient distance computations in the compute shader pipeline.\\
+    
+        \noindent A comparison between the fragment and compute shader approaches is presented in Table 1. Results show a clear gain in rendering performance when using the compute pipeline, especially as the number of rendered primitives increases.
+    
         \begin{table}[h]
             \centering
             \resizebox{\textwidth}{!}{
-                \begin{tabular}{|c|c|c|c|c|}
+                \begin{tabular}{|c|c|c|c|c|c|}
                   \hline
-                  \textbf{Shader} & \textbf{Nb spheres} & \textbf{FPS} & \textbf{GPU/CPU usage (\%)} & \textbf{Notes} \\
+                  \textbf{Shader} & \textbf{Nb spheres} & \textbf{GPU Draw} & \textbf{GPU delay to exec} & \textbf{CPU setup} & \textbf{CPU DrawFrame}  \\
                   \hline
-                  Fragment Shader & 400 & ~30 & GPU: ~20 / CPU: ~5 & Stable \\
-                  Fragment Shader & 2500 & ~2 & GPU: ~100 / CPU: ~10 & Saturate render \\
+                  Fragment & 1000 & 56,74 ms (\approxnum17 FPS) & 13,59 ms & 32,56 µs & 142,17 µs (\approxnum0,85 \%) \\
+                  shader & 1500 & 375,87 ms (\approxnum3 FPS) & 8,44 ms & 26,93 µs & 177,41 µs (\approxnum1,06 \%) \\
                   \hline
-                  Compute Shader & 2500 & ~30 & GPU: ~50 / CPU: ~2 & Gain fluidity \\
-                  Compute Shader & 5000 & ~10 & GPU: ~80 / CPU: ~5 & Reach limit \\
+                  Compute & 2000 & 54,64 ms (\approxnum18 FPS) & 5,04 ms & 14,13 µs & 145,97 µs (\approxnum0,88 \%) \\
+                  shader & 3000 & 238,09 ms (\approxnum4 FPS) & 5,87 ms & 28,37 µs & 144,51 µs (\approxnum0,87 \%) \\
                   \hline
                 \end{tabular}
             }
             \caption{Comparison between fragment shader and compute shader}
         \end{table}
-
-        Furthermore, a complete binary tree has been constructed from the point cloud using a custom space partitioning algorithm. Each node in the tree is assigned a unique index to allow efficient traversal between spatial subdivisions (see Fig.5).
-
+        
+        \vspace{-2ex}
+        \noindent
+        \begin{minipage}{\textwidth}
+        \scriptsize
+        \textit{\\
+            GPU Draw: time spent rendering on the GPU.\\
+            GPU delay to exec: latency between command submission and actual GPU execution.\\
+            CPU setup: CPU time required to prepare the draw calls.\\
+            CPU DrawFrame: total CPU time per frame, with the approximate cost in percentage of the frame duration.
+        }
+        \end{minipage}\\ \\
+    
+        \newpage
+    
+        \noindent Following this baseline comparison, additional tests were conducted to assess the effect of lighting and to evaluate the compute shader performance after integrating the binary tree. These tests were performed using 2000 and 3000 spheres, rendered both with and without lighting. As shown in Table 2, the values for GPU delay, CPU setup, and CPU DrawFrame remain stable across configurations, confirming that the addition of the binary tree introduces no measurable overhead. \\
+    
+        \noindent In contrast, the GPU Draw time increases significantly when lighting is enabled. This effect is particularly notable with higher object counts, where the GPU render time rises sharply while CPU metrics remain largely unchanged. The results confirm that the raymarching stage, especially when combined with lighting and reflection computations, is the primary performance bottleneck. This observation is further illustrated by the accompanying performance graph, which highlights the impact of lighting on GPU workload.
+    
+        \begin{table}[h]
+            \centering
+            \resizebox{\textwidth}{!}{
+                \begin{tabular}{|c|c|c|c|c|c|}
+                  \hline
+                  \textbf{Nb spheres} & \textbf{Lighting} & \textbf{GPU Draw} & \textbf{GPU delay to exec} & \textbf{CPU setup} & \textbf{CPU DrawFrame}  \\
+                  \hline
+                  \approxnum2000 & ON & 32,32 ms (\approxnum31 FPS) & 3,05 ms & 13,04 µs & 142,37 µs (\approxnum0,85 \%) \\
+                  & OFF & 13,18 ms (\approxnum76 FPS) & 4,07 ms & 19,28 µs & 147,08 µs (\approxnum0,88 \%) \\
+                  \hline
+                  \approxnum3000 & ON & 120,68 ms (\approxnum8 FPS) & 4,42 ms & 28,09 µs & 144,23 µs (\approxnum0,87 \%) \\
+                  & OFF & 14,28 ms (\approxnum70 FPS) & 5,17 ms & 12,88 µs & 361,23 µs (\approxnum2,16 \%) \\
+                  \hline
+                \end{tabular}
+            }
+            \caption{Comparison between fragment shader and compute shader}
+        \end{table}
+        
+        \vspace{-2ex}
+        \noindent
+        \begin{minipage}{\textwidth}
+        \scriptsize
+        \textit{\\
+            GPU Draw: time spent rendering on the GPU.\\
+            GPU delay to exec: latency between command submission and actual GPU execution.\\
+            CPU setup: CPU time required to prepare the draw calls.\\
+            CPU DrawFrame: total CPU time per frame, with the approximate cost in percentage of the frame duration.
+        }
+        \end{minipage}
+    
     \newpage
-
+    
     \subsection{Performance and Realism Evaluation}
     
-        The transition to compute shaders has led to improvements in frame rendering times and a reduction in GPU workload by optimizing memory access patterns and the execution of raymarching steps. Unlike fragment shaders, compute shaders decouple rendering from the rasterization pipeline, enabling more direct and efficient computation of per-pixel color values.\\
+        The integration of compute shaders and a binary space partitioning structure has led to significant improvements in execution efficiency. As demonstrated in the previous tables, frame rendering times were reduced, and GPU workload was more evenly distributed. These gains are primarily attributed to the decoupling of rendering from the rasterisation pipeline, as well as to the reduction of unnecessary distance evaluations made possible by spatial subdivision.\\
         
-        Although no formal benchmarking has yet been performed, a clear increase in visual fluidity and responsiveness has been observed, particularly when rendering large numbers of blended shapes.\\
-        % TODO make screen shots and perf test, before/after
+        \noindent While CPU usage remained low and stable across all test cases, the GPU draw time increased considerably when lighting was enabled. This confirms that the primary performance bottleneck lies in the raymarching process itself, particularly when combined with shading and reflection computations. These findings are consistent across multiple hardware configurations.\\
         
-        From a visual realism standpoint, the blending technique and lighting model have proven effective in conveying the semi-solid, semi-fluid appearance of molten glass. It should be emphasized that this effect is purely graphical; no physical simulation of material behavior is included. The material responds convincingly to lighting, and the reflections contribute strong visual cues about shape and curvature.
-
+        \noindent From a visual perspective, the implemented blending techniques, surface normals derived from SDF gradients, and Phong-based lighting collectively contribute to a convincing graphical representation of molten glass. The transitions between forms and reflections offer strong visual cues related to material curvature and transparency. It is important to note, however, that these effects are purely visual; no physically-based simulation has been implemented.\\
+        
+        \noindent Overall, the current rendering pipeline demonstrates a favourable compromise between realism and computational performance, providing a strong foundation for future extensions in interactive environments.
+    
+    \newpage
+    
     \subsection{Limitations and Ongoing Work}
     
-        Despite the promising results obtained so far, several essential features remain under development:
-        
-        \begin{itemize}
-            \item Glass deformation is currently represented only at the visual level, without any physical modeling or real-time physical interaction.\\
-        
-            \item The integration of point clouds as a geometric foundation for molten glass remains in progress and has not yet been fully connected to the raymarching framework.\\
-        
-            \item Live user interaction, such as real-time shaping of the glass, is not yet supported and remains a long-term objective.\\
-        \end{itemize}
-        
-       Additionally, the accurate rendering of transparency and internal refraction—both critical for realistic glass appearance—continues to present significant challenges. These aspects are intended to be explored in future stages of the project.
+        Although the system has reached a functionally complete stage, several key features remain under development or require refinement to reach the intended level of interactivity and realism.\\
 
+        \noindent First, the current implementation of tree traversal in the compute shader is functional but requires updates to resolve known issues, particularly related to the consistency of node access and traversal order. The tree creation is on the CPU side and it is not optimal in terms of performance and memory usage.\\
+        
+        \noindent Secondly, lighting remains a performance bottleneck. While basic Phong shading is implemented, recursive lighting effects such as multiple reflections are not yet fully supported. Enabling more accurate and layered lighting computations is expected to improve realism, but requires careful control of performance cost.\\
+        
+        \noindent Another technical limitation lies in the frame rendering strategy. The system currently operates without double or triple buffering, which affects frame coherence and responsiveness under load. A buffered rendering pipeline is planned to improve visual stability and latency.\\
+        
+        \noindent Several advanced features are also under consideration. The transparency model, although partially implemented, does not yet support full refraction and light propagation through complex materials. Supporting larger point clouds remains a performance challenge mainly in memory management. Additionally, the integration of a cube map for environment-based reflections is planned to enhance spatial coherence and visual immersion.\\
+        
+        \noindent Finally, the introduction of a time-resolved buffer structure is being explored to enable real-time deformation and stream updates to the point cloud, thereby transforming the viewer from a static renderer into a dynamic simulation context.
+    
     \newpage
-
+    
     \subsection{General Discussion}
+    
+        The results obtained confirm that the raymarching-based approach provides a flexible and expressive framework for the real-time visualisation of molten glass. By combining implicit surface rendering, compute shaders, and spatial partitioning, the system can depict continuous, deformable volumes with convincing visual fidelity.\\
 
-        The results obtained thus far demonstrate that the real-time visual representation of molten glass using raymarching constitutes a feasible and effective approach. The combination of implicit surface rendering and compute shader execution offers a flexible framework capable of reproducing complex visual phenomena. Importantly, the implemented system is not intended to simulate the physical behavior of glass, but rather to approximate its appearance in a real-time, interactive context. \\
+        \noindent The visual feedback, achieved through blending operations, dynamic shading, and surface-level lighting, effectively reproduces the perceptual properties of molten glass without resorting to complex mesh structures or physical modelling. This focus on graphical realism, rather than physical accuracy, has enabled real-time performance even on moderately equipped systems.\\
         
-        A solid foundation has been established for further development, including user interactivity, volumetric rendering, and integration into augmented and virtual reality environments. More broadly, this work illustrates how digital tools can support the preservation of traditional craftsmanship, offering new possibilities for education, training, and cultural dissemination—while contributing to more sustainable practices.
-
-\newpage
+        \noindent The architecture remains extensible. The successful integration of the binary tree structure demonstrates the feasibility of incorporating spatial data structures within compute shaders, paving the way for more advanced interactions with point cloud data. The modular design also facilitates the addition of future features such as transparency, cube map reflections, and point cloud deformation.\\
+        
+        \noindent More broadly, the project demonstrates how modern graphics techniques can support traditional artistic domains by offering tools for virtual training, experimentation, and cultural dissemination. The current implementation provides a robust base for future developments, including interactivity, adaptive streaming, and ultimately, physically-informed graphical simulation.
+    
+    \newpage
 
 \section{Conclusions, future prospects}
 
-    This work was conducted within the framework of a broader research initiative led by the LORIA, aiming to create an immersive augmented reality experience for glassblowing. The contribution presented here focused exclusively on the real-time visual rendering of molten glass, with the objective of reproducing its appearance in a convincing and responsive manner. No physical simulation was implemented; the scope remained limited to the graphical representation of the material.\\
-    
-    To meet this objective, a raymarching-based rendering pipeline was developed, using implicit surfaces and compute shaders to visualize deformable shapes in real time. Lighting and blending techniques were introduced to emulate the semi-fluid, semi-transparent qualities of molten glass. In addition, a custom space partitioning algorithm was designed to optimize point cloud traversal, and a binary tree structure was successfully generated from the dataset. These developments demonstrate the feasibility of achieving realistic visual representations of molten glass without relying on mesh geometry.\\
-    
-    The system offers a solid foundation for further research. Future work may include the integration of user interaction, allowing real-time shaping of the glass; improvements in optical realism, such as internal refraction and transparency handling; and the implementation of visual effects like thermal gradients to enrich the perception of material behavior. On a technical level, building the binary tree directly within the compute shader is a promising step toward full GPU-side computation. Ultimately, the vision is to transform the viewer into a true real-time simulation, where deformations applied to point clouds are computed interactively, with the spatial structure being updated dynamically. In the longer term, the incorporation of physically-based simulation models could extend the system beyond visual rendering toward behavioral realism.
+This work was carried out as part of a broader research initiative led by the LORIA, aiming to create an immersive augmented reality experience for glassblowing. The contribution presented here focused exclusively on the real-time visual rendering of molten glass. No physical modelling of the material was performed; the project remained within the scope of graphical representation, to produce a visually convincing and interactive depiction of molten glass.\\
 
+\noindent To meet this objective, a raymarching-based rendering pipeline was developed, relying on implicit surfaces and compute shaders to depict smooth, deformable volumes in real time. Several techniques were implemented to enhance visual realism, including shape blending, Phong lighting, Fresnel effects, and a transparency model. In parallel, a custom space partitioning algorithm was introduced to optimise point cloud traversal through a binary tree structure.\\
+
+\noindent Performance evaluations confirmed the scalability of the compute pipeline and demonstrated the visual plausibility of the molten glass rendering, without introducing overhead from the space partitioning system. These results validate the feasibility of using raymarching in conjunction with point cloud data for interactive and expressive visual applications.\\
+
+\noindent This implementation provides a robust and extensible foundation for further development. Immediate technical priorities include:\\
+
+\begin{itemize}
+    \item[\hspace{0cm}] • optimizing tree traversal within the compute shader;  
+    \item[\hspace{0cm}] • optimizing recursive lighting and reflections;  
+    \item[\hspace{0cm}] • introducing double or triple buffering to store the binary tree and the point cloud in different buffers to push the memory limits 
+    \item[\hspace{0cm}] • finalising the transparency model with full support for refraction;  
+    \item[\hspace{0cm}] • integrating environment-based cube maps;  
+    \item[\hspace{0cm}] • execute the space partitioning on the GPU side to get better performances.\\
+\end{itemize}
+
+\noindent More broadly, the project sets the stage for the eventual integration of physically-based simulation models. While the current system focuses on visual fidelity, the long-term vision is to transform the viewer into a real-time simulation framework, where user-driven deformations and realistic material behaviours can be computed interactively.
 
 \newpage
-    
+
 \section{Bibliographical references}
-    \nocite{*}
-    \begingroup
-        \renewcommand{\refname}{}%
-        \vspace*{-2em} % ajuste cette valeur pour compenser l’espace vide
-        \bibliography{main} % This is required to be included
-        \bibliographystyle{unsrt} % vous pouvez utiliser d'autres styles pour lister vos références (regardez sur internet)
-    \endgroup
+\nocite{*}
+\begingroup
+    \renewcommand{\refname}{}%
+    \vspace*{-2em} % ajuste cette valeur pour compenser l’espace vide
+    \bibliography{main} % This is required to be included
+    \bibliographystyle{unsrt} % vous pouvez utiliser d'autres styles pour lister vos références (regardez sur internet)
+\endgroup
 
 \end{document}
